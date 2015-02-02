@@ -1,0 +1,153 @@
+buildscript {
+    repositories {
+    	maven { url 'http://192.168.1.200:8081/nexus/content/groups/public/' }
+    	maven { url 'http://192.168.1.200:8081/nexus/content/repositories/libs/' } 
+	    mavenCentral()
+	}
+    
+    dependencies {
+    	//compile project(':other_project')
+    	//compile project(path: ':other_project', configuration: 'archives')
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+
+	eclipse {
+  	classpath {
+    	downloadSources = true 
+    	downloadJavadoc = false 
+  		}
+	}
+
+    version = '1.0.1'
+    ext {
+        appName = 'tools'
+    }
+
+    repositories {
+      	maven { url 'http://192.168.1.200:8081/nexus/content/groups/public/' }
+    	maven { url 'http://192.168.1.200:8081/nexus/content/repositories/libs/' } 
+     	mavenCentral()
+    }
+}
+
+project(":language") {
+    apply plugin: "java"
+
+    dependencies {
+		compile (
+			'ch.qos.logback:logback-classic:1.1.2',
+			'ch.qos.logback:logback-core:1.1.2',
+			'org.slf4j:slf4j-api:1.7.7',
+			'net.excel:poi:3.10-FINAL-20140208',
+			'net.excel:poi-excelant:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml-schemas:3.10-FINAL-20140208',
+			'net.excel:poi-scratchpad:3.10-FINAL-20140208',
+			'junit:junit:4.9'
+		)
+			
+		runtime(
+		)
+		
+		testCompile(
+			//'junit:junit:4.9'
+		)
+		
+		testRuntime(
+		)
+    }
+}
+
+project(":xml") {
+    apply plugin: "java"
+
+    dependencies {
+		compile (
+			'dom4j:dom4j:1.6.1', 
+			'junit:junit:4.9',
+			'org.apache.xmlbeans:xmlbeans:2.6.0',
+			'net.excel:poi:3.10-FINAL-20140208',
+			'net.excel:poi-excelant:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml-schemas:3.10-FINAL-20140208',
+			'net.excel:poi-scratchpad:3.10-FINAL-20140208',
+			'junit:junit:4.9'
+		)
+			
+		runtime(
+		)
+		
+		testCompile(
+			//'junit:junit:4.9'
+		)
+		
+		testRuntime(
+		)
+    }
+}
+
+project(":maps") {
+    apply plugin: "java"
+
+    dependencies {
+		compile (
+			'dom4j:dom4j:1.6.1', 
+			'net.excel:poi:3.10-FINAL-20140208',
+			'net.excel:poi-excelant:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml:3.10-FINAL-20140208',
+			'net.excel:poi-ooxml-schemas:3.10-FINAL-20140208',
+			'net.excel:poi-scratchpad:3.10-FINAL-20140208',
+			'junit:junit:4.9'
+		)
+    }
+}
+
+task wrapper(type: Wrapper) {  
+   	gradleVersion = '2.1'  
+		distributionUrl = 'http://192.168.1.200/gradle-2.1-all.zip' 
+}
+
+
+task untar(type: Copy) {
+  from tarTree('F:/liuzhen_2014-07-17225442.tar.gz')
+
+  //tar tree attempts to guess the compression based on the file extension
+  //however if you must specify the compression explicitly you can:
+  //from tarTree(resources.gzip('someTar.ext'))
+
+  //in case you work with unconventionally compressed tars
+  //you can provide your own implementation of a ReadableResource:
+  //from tarTree(yourOwnResource as ReadableResource)
+
+  into 'service'
+}
+
+task tarFiles(type: Tar) { 
+		from ('H:/svnrepos/svn/') {
+				include  'conf/*'
+		}
+		
+		from ('F:/nginx-1.2.3') {
+				include  'html/'
+				include  'logs/'
+		}
+
+    // Set destination directory.
+    //destinationDir = file("$buildDir/tarballs")
+    destinationDir = file("F:/")
+
+    // Set filename properties.
+    baseName = 'liuzhen' + getDate()
+    extension = 'tar.gz'
+
+    compression = Compression.GZIP // or Compression.BZIP2
+}
+
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
+}

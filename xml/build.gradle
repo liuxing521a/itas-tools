@@ -1,0 +1,33 @@
+apply plugin: "java"
+
+sourceCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+//defaultTasks 'clean', 'sourcesJar', 'jar'
+//sourceSets.main.java.srcDirs = [  'java/', 'resources/', 'test/'  ]
+
+eclipse.project {
+    name = appName + '-xml'
+}
+
+jar {
+	manifest {
+	    attributes 'Main-Class': 'com.godwan.code.GenCode' 
+	    attributes 'title': 'utils' 
+	    attributes 'version': version
+	 	attributes 'createTime': new Date() 
+	}
+	
+	from {
+		configurations.compile.collect{
+			it.isDirectory() ? it : zipTree(it)
+		}
+		configurations.runtime.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	
+	//doLast {
+    //    file('build/libs/code-1.0.1.jar').renameTo(file('build/libs/protoc.jar'))
+    //}
+}

@@ -1,0 +1,31 @@
+apply plugin: "java"
+
+sourceCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+eclipse.project {
+    name = appName + '-maps'
+}
+
+jar {
+	manifest {
+	    attributes 'Main-Class': 'net.itas.tools.map.Main' 
+	    attributes 'title': 'utils' 
+	    attributes 'version': version
+	 	attributes 'createTime': new Date() 
+	}
+	copy {
+		from('java') include '*.png'
+		into 'build/classes/main'
+	}
+	
+	from {
+		configurations.compile.collect{
+			it.isDirectory() ? it : zipTree(it)
+		}
+		configurations.runtime.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+}
+
